@@ -8,6 +8,20 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 #using imagedataGenerator which is a part of the tensorflow.keras API.
 #It generates batches during training of the model and saves memory.
 
+'''
+MobileNetV2 is a CNN (Convolutional Neural Network) meaning a type of artificial
+neural network primarily used for analysing visual imagery.
+It was trained on millions of images (ImageNet), 
+so it already knows how to see things like edges, shapes, patterns, curves, etc.
+'''
+from tensorflow.keras.applications import MobileNetV2
+#It helps to stack the layers in order. As our program is linear.
+from tensorflow.keras.models import Sequential
+#GlobalAveragePooling2D shrinks the 2D feature maps into a 1D vector
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
+
+
+
 #Lets Create our Data generator to Load and Augment Images
 
 #lets keep constant ImageSize and BatchSize
@@ -35,6 +49,7 @@ train_datagen = ImageDataGenerator(
     validation_split=0.2  #splits image by 20%
 )
 
+#training images from the train_datagen setting
 train_generator = train_datagen.flow_from_directory(
     'src/images',
     target_size =IMAGE_SIZE,
@@ -44,6 +59,7 @@ train_generator = train_datagen.flow_from_directory(
 
 )
 
+#to check if my model is actually learning or just memorizing
 val_generator = train_datagen.flow_from_directory(
     'src/images',
     target_size = IMAGE_SIZE,
@@ -51,3 +67,7 @@ val_generator = train_datagen.flow_from_directory(
     class_mode = 'categorical',
     subset = 'validation'
 )
+
+
+
+
