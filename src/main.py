@@ -68,6 +68,25 @@ val_generator = train_datagen.flow_from_directory(
     subset = 'validation'
 )
 
+#lets load the base model without the fully connected layers
+base_model = MobileNetv2(
+    input_shape = IMAGE_SIZE + (3,),
+    include_top = False, #no need for the top which is used to classify 1000 categories from imagenet dataset
+    weights = 'imagenet' #asking pre-trained weights learned from imagenet
+)
+
+#Freezing the base model because we don't want to train it 
+base_model.trainable = False
+
+#stack our model using the sequential
+model = Sequential(
+    base_model,#extracts features like shapes/edges
+    GlobalAveragePooling2D(),#reduces 2d vector to 1d vector
+    Dense(128,actiavtion = 'relu'), #A fully connected layer 
+    #leanrs patterns specific to landmark class(dense(18))
+    Dense(train_generator.num_classes,activation= 'softmax')#output layer 
+    #this outputs probability for each class 
 
 
+)
 
