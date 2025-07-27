@@ -41,7 +41,7 @@ out and train itself.
 
 
 train_datagen = ImageDataGenerator(
-    rescale = 1./225, #changes pixel 0-255 to 0-1
+    rescale = 1./255, #changes pixel 0-255 to 0-1
     rotation_range = 30,#rotates randomly upto 30 degree
     zoom_range = 0.2,#zooms in/out
     brightness_range = (0.5,1.5), #makes photo darker/brighter
