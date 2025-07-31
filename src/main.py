@@ -2,7 +2,7 @@
 #we are using tensorflow here, i am using tensorflow's keras API
 #TensorFlow keras API is high level ,easy to write and fast .
 #Keras also handles memory management and I don't have to deal with complicated wiring as a beginner
-
+import json
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 #using imagedataGenerator which is a part of the tensorflow.keras API.
@@ -51,17 +51,17 @@ train_datagen = ImageDataGenerator(
 
 #training images from the train_datagen setting
 train_generator = train_datagen.flow_from_directory(
-    'src/images',
-    target_size =IMAGE_SIZE,
-    batch_size = BATCH_SIZE,
-    class_mode = 'categorical',
-    subset='training'
+    'images', #flowing images from the directory 
+    target_size =IMAGE_SIZE,#keeping the target size same as image_size
+    batch_size = BATCH_SIZE, #bringing a batch of 32 images in time
+    class_mode = 'categorical', #so, this means the batch is gonna be mixed not from the same class
+    subset='training'#pictures split in two groups one for training and one for validaion
 
 )
 
 #to check if my model is actually learning or just memorizing
 val_generator = train_datagen.flow_from_directory(
-    'src/images',
+    'images',#flowing image from the directory
     target_size = IMAGE_SIZE,
     batch_size = BATCH_SIZE,
     class_mode = 'categorical',
@@ -69,15 +69,7 @@ val_generator = train_datagen.flow_from_directory(
 )
 
 #lets load the base model without the fully connected layers
-<<<<<<< HEAD
 base_model = MobileNetV2(
-=======
-<<<<<<< HEAD
-base_model = MobileNetv2(
-=======
-base_model = MobileNetV2(
->>>>>>> 69a7aa9 (added model compile)
->>>>>>> new-feature
     input_shape = IMAGE_SIZE + (3,),
     include_top = False, #no need for the top which is used to classify 1000 categories from imagenet dataset
     weights = 'imagenet' #asking pre-trained weights learned from imagenet
@@ -87,22 +79,6 @@ base_model = MobileNetV2(
 base_model.trainable = False
 
 #stack our model using the sequential
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-model = Sequential(
-    base_model,#extracts features like shapes/edges
-    GlobalAveragePooling2D(),#reduces 2d vector to 1d vector
-    Dense(128,actiavtion = 'relu'), #A fully connected layer 
-    #leanrs patterns specific to landmark class(dense(18))
-    Dense(train_generator.num_classes,activation= 'softmax')#output layer 
-    #this outputs probability for each class 
-
-
-)
-
-=======
->>>>>>> new-feature
 model = Sequential([
     base_model,#extracts features like shapes/edges
     GlobalAveragePooling2D(),#reduces 2d vector to 1d vector
@@ -110,22 +86,25 @@ model = Sequential([
     #leanrs patterns specific to landmark class(dense(18))
     Dense(train_generator.num_classes,activation= 'softmax')#output layer 
     #this outputs probability for each class 
+
 ])
 
 
 model.compile(
-    optimize = 'adam',
-    loss = 'categorical_crossentropy',
-    metrics= ['accuracy']
+    optimizer = 'adam',#learning method,helps the model adjust its knowledge bit by bit
+    loss = 'categorical_crossentropy',#tells the model how to measure how wrong it is while guessing wrong landmark
+    metrics= ['accuracy']#this tells model about prediction
 )
-
+#history keeps track of how model's performance changes as it learns
 history = model.fit(
     train_generator,
     validation_data = val_generator,
-    epochs = 10
-<<<<<<< HEAD
+    epochs = 10 #one round of learning
+
 )
-=======
-)
->>>>>>> 69a7aa9 (added model compile)
->>>>>>> new-feature
+#saving the model
+model.save("Landmark_AI.h5")
+#when generator laods images from folder it assigns numbers to each landmark class 
+with open("class_indices.json", "w") as f:
+    json.dump(train_generator.class_indices, f)
+#this tells model which number corresponds to which landmark
